@@ -1,0 +1,29 @@
+const mineflayer = require('mineflayer');
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => res.send('Бот активний!'));
+app.listen(8080);
+
+const botArgs = {
+    host: 'SlepTime.aternos.me',
+    port: 15037,
+    username: 'MrBeast',
+    version: '1.20.1'
+};
+
+function createBot() {
+    const bot = mineflayer.createBot(botArgs);
+    bot.on('login', () => console.log('Бот зайшов на сервер!'));
+    bot.on('spawn', () => {
+        setInterval(() => {
+            bot.setControlState('jump', true);
+            setTimeout(() => bot.setControlState('jump', false), 500);
+        }, 60000); // Стрибати раз на хвилину
+    });
+    bot.on('end', () => {
+        console.log('Виліт, перепідключення...');
+        setTimeout(createBot, 30000);
+    });
+}
+createBot();
